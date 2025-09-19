@@ -12,6 +12,7 @@ public class GameSettings {
     
     public static final int ATTACK_COOLDOWN = 5000;
     public static final int MAX_ATTACK_DURATION = 2000;
+    public static final int JUMP_COOLDOWN = 2000;
     
     public static final int BOMB_HEALTH = 300;
     public static final int BOMB_SPAWN_DELAY = 5000;
@@ -25,6 +26,7 @@ public class GameSettings {
     public static final int ANIMATION_ATTACK_DELAY = 100;
     public static final int ANIMATION_RASENGAN_DELAY = 80;
     public static final int ANIMATION_HIT_DELAY = 80;
+    public static final int ANIMATION_JUMP_DELAY = 100;
     public static final int ANIMATION_BOMB_IDLE_DELAY = 120;
     public static final int ANIMATION_BOMB_HIT_DELAY = 150;
     
@@ -47,6 +49,7 @@ public class GameSettings {
     public static final String ATTACK_SPRITE_PATH = "assets/players/naruto_attack.png";
     public static final String RASENGAN_SPRITE_PATH = "assets/players/rasengan.png";
     public static final String HIT_SPRITE_PATH = "assets/players/naruto_hit.png";
+    public static final String JUMP_SPRITE_PATH = "assets/players/naruto_jump.png";
     public static final String RASENGAN_SOUND_PATH = "assets/sfx/rasengan.wav";
     
     public static final int IDLE_FRAMES = 6;
@@ -54,6 +57,7 @@ public class GameSettings {
     public static final int ATTACK_FRAMES = 4;
     public static final int RASENGAN_FRAMES = 4;
     public static final int HIT_FRAMES = 7;
+    public static final int JUMP_FRAMES = 6;
     
     public static final int IDLE_FRAME_WIDTH = 87;
     public static final int IDLE_FRAME_HEIGHT = 88;
@@ -65,4 +69,12 @@ public class GameSettings {
     public static final int RASENGAN_FRAME_HEIGHT = 32;
     public static final int HIT_FRAME_WIDTH = 82;
     public static final int HIT_FRAME_HEIGHT = 82;
+    public static final int JUMP_FRAME_WIDTH = 89;
+    public static final int JUMP_FRAME_HEIGHT = 90;
+    
+   
+    public static final int JUMP_BOUNCE_UP = 100;
+    public static final int JUMP_BOUNCE_BACK = 150;
+    public static final int JUMP_BOUNCE_UP_STEP = 8;
+    public static final int JUMP_BOUNCE_BACK_STEP = 6;
 }

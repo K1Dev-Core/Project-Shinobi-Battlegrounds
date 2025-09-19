@@ -10,6 +10,7 @@ public class AnimationManager {
     private BufferedImage[] attackFrames;
     private BufferedImage[] rasenganFrames;
     private BufferedImage[] hitFrames;
+    private BufferedImage[] jumpFrames;
     private BufferedImage[] startFrames;
     private BufferedImage[] fogFrames;
     
@@ -18,6 +19,7 @@ public class AnimationManager {
     private int attackFrame = 0;
     private int rasenganFrame = 0;
     private int hitFrame = 0;
+    private int jumpFrame = 0;
     private int startFrame = 0;
     private int fogFrame = 0;
     
@@ -26,6 +28,7 @@ public class AnimationManager {
     private long lastAttackFrameTime = 0;
     private long lastRasenganFrameTime = 0;
     private long lastHitFrameTime = 0;
+    private long lastJumpFrameTime = 0;
     private long lastStartFrameTime = 0;
     private long lastFogFrameTime = 0;
     
@@ -56,6 +59,10 @@ public class AnimationManager {
             BufferedImage hitSheet = ImageIO.read(new File(GameSettings.HIT_SPRITE_PATH));
             hitSheet = makeTransparent(hitSheet, GameSettings.TRANSPARENT_COLOR, GameSettings.COLOR_TOLERANCE);
             hitFrames = loadFrames(hitSheet, GameSettings.HIT_FRAMES, GameSettings.HIT_FRAME_WIDTH, GameSettings.HIT_FRAME_HEIGHT, 0);
+
+            BufferedImage jumpSheet = ImageIO.read(new File(GameSettings.JUMP_SPRITE_PATH));
+            jumpSheet = makeTransparent(jumpSheet, GameSettings.TRANSPARENT_COLOR, GameSettings.COLOR_TOLERANCE);
+            jumpFrames = loadFrames(jumpSheet, GameSettings.JUMP_FRAMES, GameSettings.JUMP_FRAME_WIDTH, GameSettings.JUMP_FRAME_HEIGHT, 1);
 
             BufferedImage startSheet = ImageIO.read(new File("assets/players/naruto_start.png"));
             startSheet = makeTransparent(startSheet, GameSettings.TRANSPARENT_COLOR, GameSettings.COLOR_TOLERANCE);
@@ -147,6 +154,15 @@ public class AnimationManager {
         }
     }
     
+    public void updateJumpAnimation(long now) {
+        if (now - lastJumpFrameTime >= GameSettings.ANIMATION_JUMP_DELAY) {
+            if (jumpFrames != null && jumpFrames.length > 0) {
+                jumpFrame = (jumpFrame + 1) % jumpFrames.length;
+            }
+            lastJumpFrameTime = now;
+        }
+    }
+    
     public void resetAttackAnimation() {
         attackFrame = 0;
     }
@@ -157,6 +173,10 @@ public class AnimationManager {
     
     public void resetHitAnimation() {
         hitFrame = 0;
+    }
+    
+    public void resetJumpAnimation() {
+        jumpFrame = 0;
     }
     
     public BufferedImage getCurrentIdleFrame() {
@@ -184,6 +204,11 @@ public class AnimationManager {
         return hitFrames[hitFrame % hitFrames.length];
     }
     
+    public BufferedImage getCurrentJumpFrame() {
+        if (jumpFrames == null || jumpFrames.length == 0) return null;
+        return jumpFrames[jumpFrame % jumpFrames.length];
+    }
+    
     public BufferedImage[] getIdleFrames() {
         return idleFrames;
     }
@@ -204,6 +229,10 @@ public class AnimationManager {
         return hitFrames;
     }
     
+    public BufferedImage[] getJumpFrames() {
+        return jumpFrames;
+    }
+    
     public int getIdleFrame() {
         return idleFrame;
     }
@@ -222,6 +251,10 @@ public class AnimationManager {
     
     public int getHitFrame() {
         return hitFrame;
+    }
+    
+    public int getJumpFrame() {
+        return jumpFrame;
     }
     
     public boolean isAttackAnimationComplete() {

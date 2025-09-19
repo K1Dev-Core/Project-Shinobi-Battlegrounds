@@ -54,7 +54,7 @@ public class Game extends JPanel implements Runnable {
                     return;
                 }
 
-                if (!player.isAttacking()) {
+                if (!player.isAttacking() && !player.isJumping()) {
                     if (e.getKeyCode() == java.awt.event.KeyEvent.VK_A) {
                         movingLeft = true;
                         player.setFacingRight(false);
@@ -63,6 +63,10 @@ public class Game extends JPanel implements Runnable {
                         movingRight = true;
                         player.setFacingRight(true);
                     }
+                }
+
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_W) {
+                    player.startJump(System.currentTimeMillis());
                 }
 
                 if (e.getKeyCode() == java.awt.event.KeyEvent.VK_SPACE) {
@@ -74,7 +78,7 @@ public class Game extends JPanel implements Runnable {
             public void keyReleased(java.awt.event.KeyEvent e) {
                 if (!gameStarted) return;
 
-                if (!player.isAttacking()) {
+                if (!player.isAttacking() && !player.isJumping()) {
                     if (e.getKeyCode() == java.awt.event.KeyEvent.VK_A) {
                         movingLeft = false;
                     }
@@ -93,6 +97,9 @@ public class Game extends JPanel implements Runnable {
                         hasPlayedStartAnimation = false;
                         hasPlayedRespawnSound = false;
                         hasPlayedVsSound = false;
+                        if (vsSound != null) {
+                            vsSound.stop();
+                        }
                         showMainMenu();
                     }
                 }
@@ -112,6 +119,11 @@ public class Game extends JPanel implements Runnable {
                 player.update(now, player.isAttacking(), movingLeft, movingRight);
 
                 if (wasAttacking && !player.isAttacking()) {
+                    movingLeft = false;
+                    movingRight = false;
+                }
+                
+                if (player.isJumping()) {
                     movingLeft = false;
                     movingRight = false;
                 }
@@ -177,7 +189,7 @@ public class Game extends JPanel implements Runnable {
 
             g2d.setFont(new Font("Arial", Font.PLAIN, 18));
             FontMetrics controlsMetrics = g2d.getFontMetrics();
-            String controls = "A/D - Move Left/Right  |  SPACE - Attack";
+            String controls = "A/D - Move Left/Right  |  W - Jump  |  SPACE - Attack";
             int controlsX = centerX - controlsMetrics.stringWidth(controls) / 2;
             int controlsY = centerY + 70;
             g2d.drawString(controls, controlsX, controlsY);
@@ -207,7 +219,6 @@ public class Game extends JPanel implements Runnable {
             renderer.drawPlayerStartAnimation(player);
         } else {
             renderer.drawPlayer(player);
-            renderer.drawRasengan(player);
         }
 
         renderer.drawBomb(bomb);
@@ -215,6 +226,10 @@ public class Game extends JPanel implements Runnable {
         renderer.drawPlayerHealthBar(player, getWidth());
         renderer.drawBombHealthBar(bomb, getWidth());
         renderer.drawVS(getWidth());
+        
+        if (!player.isPlayingStartAnimation()) {
+            renderer.drawRasengan(player);
+        }
 
         long currentTime = System.currentTimeMillis();
 
@@ -268,7 +283,7 @@ public class Game extends JPanel implements Runnable {
     private void playVsSound() {
         if (vsSound != null) {
             vsSound.setFramePosition(0);
-            vsSound.start();
+            vsSound.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
 

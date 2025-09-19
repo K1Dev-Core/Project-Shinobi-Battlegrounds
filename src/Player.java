@@ -4,7 +4,7 @@ import javax.sound.sampled.*;
 public class Player {
 
     private int x;
-    private final int y;
+    private int y;
     private final int speed;
     private final double scale;
 
@@ -14,14 +14,21 @@ public class Player {
     private boolean isAttacking = false;
     private boolean showRasengan = false;
     private boolean isHoldingAttack = false;
+    private boolean isJumping = false;
+    private int originalX;
+    private int originalY;
+    private int jumpOffsetX = 0;
+    private int jumpOffsetY = 0;
 
     private long lastAttackTime = 0;
+    private long lastJumpTime = 0;
     private long attackStartTime = 0;
     private int attackFrame = 0;
     private int rasenganFrame = 0;
     private long lastRasenganTime = 0;
     private int idleFrame = 0;
     private int walkFrame = 0;
+    private int jumpFrame = 0;
     private long lastIdleTime = 0;
     private long lastWalkTime = 0;
     private int startFrame = 0;
@@ -70,6 +77,8 @@ public class Player {
 
         if (isAttacking) {
             updateAttack(now);
+        } else if (isJumping) {
+            updateJump(now);
         } else {
             updateMovement(now);
         }
@@ -97,6 +106,25 @@ public class Player {
                     rasenganFrame = (rasenganFrame + 1) % animationManager.getRasenganFrames().length;
                     lastRasenganTime = now;
                 }
+            }
+        }
+    }
+
+    private void updateJump(long now) {
+        if (now - lastJumpTime >= GameSettings.ANIMATION_JUMP_DELAY) {
+            jumpFrame++;
+            lastJumpTime = now;
+            
+            if (jumpFrame < animationManager.getJumpFrames().length) {
+                jumpOffsetY = -GameSettings.JUMP_BOUNCE_UP + (jumpFrame * GameSettings.JUMP_BOUNCE_UP_STEP);
+                jumpOffsetX = -GameSettings.JUMP_BOUNCE_BACK + (jumpFrame * GameSettings.JUMP_BOUNCE_BACK_STEP);
+                
+                x = originalX + jumpOffsetX;
+                y = originalY + jumpOffsetY;
+            }
+            
+            if (jumpFrame >= animationManager.getJumpFrames().length) {
+                stopJump(now);
             }
         }
     }
@@ -151,6 +179,29 @@ public class Player {
     public void stopAttackInput() {
         isHoldingAttack = false;
         stopRasenganSound();
+    }
+
+    public void startJump(long now) {
+        if (!isAttacking && !isJumping && now - lastJumpTime >= GameSettings.JUMP_COOLDOWN) {
+            isJumping = true;
+            jumpFrame = 0;
+            lastJumpTime = now;
+            movingLeft = false;
+            movingRight = false;
+            
+            originalX = x;
+            originalY = y;
+            jumpOffsetX = 0;
+            jumpOffsetY = 0;
+        }
+    }
+
+    private void stopJump(long now) {
+        isJumping = false;
+        jumpFrame = 0;
+        y = originalY;
+        jumpOffsetX = 0;
+        jumpOffsetY = 0;
     }
 
     private void stopAttack(long now) {
@@ -211,6 +262,11 @@ public class Player {
             BufferedImage[] frames = animationManager.getAttackFrames();
             if (frames != null && frames.length > 0) {
                 return frames[attackFrame % frames.length];
+            }
+        } else if (isJumping) {
+            BufferedImage[] frames = animationManager.getJumpFrames();
+            if (frames != null && frames.length > 0) {
+                return frames[jumpFrame % frames.length];
             }
         } else {
             boolean isMoving = movingLeft || movingRight;
@@ -288,6 +344,7 @@ public class Player {
     public int getX() { return x; }
     public int getY() { return y; }
     public boolean isAttacking() { return isAttacking; }
+    public boolean isJumping() { return isJumping; }
     public boolean isShowRasengan() { return showRasengan; }
     public boolean isFacingRight() { return facingRight; }
     public double getScale() { return scale; }
