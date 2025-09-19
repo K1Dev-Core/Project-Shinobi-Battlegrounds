@@ -18,7 +18,7 @@ public class GameSettings {
     public static final int BOMB_SPAWN_DELAY = 5000;
     public static final int BOMB_START_X = 800;
     public static final int BOMB_START_Y = 470;
-    public static final int ATTACK_RANGE = 400;
+    public static final int ATTACK_RANGE = 150;
     public static final int DAMAGE_PER_FRAME = 2;
     
     public static final int ANIMATION_IDLE_DELAY = 120;
@@ -31,8 +31,7 @@ public class GameSettings {
     public static final int ANIMATION_BOMB_HIT_DELAY = 150;
     
     public static final int BOMB_BLINK_DURATION = 1000;
-    public static final int BOMB_BOUNCE_Y = 20;
-    public static final int BOMB_BOUNCE_X = 30;
+
     public static final int BOMB_KNOCKBACK_DISTANCE = 100;
     
     public static final int RASENGAN_SIZE = 250;
